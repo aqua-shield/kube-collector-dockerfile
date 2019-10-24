@@ -11,7 +11,6 @@
     AZURE_ACR_PASSWORD = credentials('aquasecAzureACRpassword')
     GIT_PASS = credentials('gitPass')
   }
-  agent any
     node('build_machines'){
             timeout(120) {
                 HOST_NAME = sh(script: "hostname", returnStdout: true).replaceAll("\\s","")
