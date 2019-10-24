@@ -55,16 +55,10 @@
                                 sh 'git submodule update --init'
                             }
                             stage('Fetching Dockerfile') {
-                                steps {
                                     git 'https://aqua-shield:Xhxnv1234!@github.com/aqua-shield/kube-collector-dockerfile.git'
-                                }
                             }
                             stage('Building Image') {
-                                steps{
-                                    script {
                                     dockerImage = docker.build("$registry/$dockerRepository:$dockerImageTag", "--build-arg CACHEBUST=\$(date +%s) .") // ":$BUILD_NUMBER"
-                                    }
-                                }
                             }
                         }
                     )
