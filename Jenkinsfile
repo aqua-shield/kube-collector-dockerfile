@@ -18,7 +18,6 @@
                     wrap([$class: 'BuildUser']) {
                         triggered_by = env.BUILD_USER
                     }
-                    build_version_original = build_version
                     parallel (
                         linux_build: { 
                             sh 'sudo chown -R ubuntu:ubuntu .'
