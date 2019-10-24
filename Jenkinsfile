@@ -171,6 +171,9 @@ pipeline {
                             error("Unable to start Aqua CSP")
                         }                       
                     }
+                }
+            }
+    }
     /*
     stage('Deploy Image') {
       steps{
