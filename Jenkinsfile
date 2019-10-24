@@ -48,15 +48,10 @@
 
                                 getReleaseScript version: build_version, path: "common/genver/main.go"
 
-                                if (skip_integration_tests == "true" || skip_aqua_scan == "true") {
-                                    currentBuild.displayName = build_version+".b"+env.BUILD_ID+".("+COMMIT_NUM+").skipped_tests.("+triggered_by+")."+branch
-                                    release_name = build_version+".b"+env.BUILD_ID+"."+COMMIT_NUM+".skipped_tests"
-                                    ready_for_release = false
-                                }else{
-                                    currentBuild.displayName = build_version+".b"+env.BUILD_ID+".("+COMMIT_NUM+").("+triggered_by+")."+branch
-                                    release_name = build_version+".b"+env.BUILD_ID+"."+COMMIT_NUM
-                                    ready_for_release = true
-                                }
+                                
+                                currentBuild.displayName = build_version+".b"+env.BUILD_ID+".("+COMMIT_NUM+").("+triggered_by+")."+branch
+                                release_name = build_version+".b"+env.BUILD_ID+"."+COMMIT_NUM
+                                ready_for_release = true
                                 sh 'git submodule update --init'
                             }
                             stage('Fetching Dockerfile') {
