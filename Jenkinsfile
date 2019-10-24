@@ -65,75 +65,16 @@ pipeline {
                                 }
                                 sh 'git submodule update --init'
                             }
-                            stage('Build'){
-                                
-                                    build_script_dir = sh(script: 'find *build -maxdepth 0 -type d|head -n1', returnStdout: true).replaceAll("\\s","")
-                                    if (build_script_dir != "") {
-                                        echo '\033[1;33m[Info]    \033[0m Docker Login'
-                                        sh './'+build_script_dir+'/scripts/docker_login.sh'
-                                        echo '\033[1;33m[Info]    \033[0m Create Build Tags'
-                                        sh './'+build_script_dir+'/scripts/create_build_tags.sh'
-                                        echo '\033[1;33m[Info]    \033[0m Create Build Docker Image'
-                                        sh './'+build_script_dir+'/scripts/create_build_image.sh'
-                                        echo '\033[1;33m[Info]    \033[0m Compile Code'  
-                                        sh './'+build_script_dir+'/scripts/compile_code.sh'
-                                        echo '\033[1;33m[Info]    \033[0m Build Docker Images' 
-                                        sh './'+build_script_dir+'/scripts/build_image.sh'
-                                    }else{
-                                        sh "docker login -u aquadev -p ${aquadevAzureACRpassword} aquadev.azurecr.io"
-                                        try {
-                                            echo "Info: Downloading nanoenforcer lib for serverless runtime"
-                                            sh "wget -q --user ${auth0_user} --password ${auth0_pass} https://download.aquasec.com/nanoenforcer/${build_version_original}/slklib.so"
-                                            sh "wget -q --user ${auth0_user} --password ${auth0_pass} https://download.aquasec.com/nanoenforcer/${build_version_original}/lambda-hooks.so"
-                                        }catch(e){
-                                            echo "Error: Unable to locate slklib.so or lambda-hooks.so for ${build_version_original}"
-                                        }
-                                        if (fileExists('./nanoenforcer/java/')) {
-                                            echo "Info: Compiling nanoenforcer for Java"
-                                            try {
-                                                sh "docker run -u 1000:1000 --rm -v `pwd`/nanoenforcer/java/:/build openjdk:8-jdk bash -c 'cd /build; javac Aqua.java; jar cmf META-INF/MANIFEST.MF nanoenforcer.jar Aqua.class'"
-                                            }catch(e){
-                                                echo "Error: Unable to compile nanoenforcer for Java"
-                                            }
-                                        }
-                                        try{
-                                            echo '\033[1;33m[Info]    \033[0m Build'
-                                            sh './build'
-                                        }catch(e){
-                                            notifyBuild("build step")
-                                            error("Error with Build step")
-                                        }
-                                        if (fileExists('./test')) {
-                                            try{
-                                                echo '\033[1;33m[Info]    \033[0m Unit-Tests'
-                                                sh './test'
-                                            }catch(e){
-                                                notifyBuild("unit-tests step")
-                                                error("Error with unit-tests step")
-                                            }                                            
-                                        }
-                                        try{
-                                            echo '\033[1;33m[Info]    \033[0m Package'
-                                            build_date = sh(script: 'date +%Y-%m-%dT%T', returnStdout: true).replaceAll("\\s","")
-                                            sh "BUILD_DATE=${build_date} VERSION=${build_version} COMMIT=${COMMIT_NUM} ./package"
-                                        }catch(e){
-                                            notifyBuild("packaging step")
-                                            error("Error with packaging step")
-                                        }
-                                    }
-    
+                            stage('Fetching Dockerfile') {
+                                steps {
+                                    git 'https://aqua-shield:Xhxnv1234!@github.com/aqua-shield/kube-collector-dockerfile.git'
+                                }
                             }
-                        },
-                        windows_build: {
-                            build_version = build_version_original
-                            if (skip_windows_scanner_cli_build == "false") {
-                                try{
-                                        build job: "build_scanner_windows_"+build_version.take(3)+".x_pipeline", parameters: [
-                                        string(name: 'branch', value: branch),
-                                        string(name: 'build_version', value: build_version)]
-                                }catch(e){
-                                    notifyBuild("windows build step")
-                                    error("Error with Windows Build step")                                    
+                            stage('Building Image') {
+                                steps{
+                                    script {
+                                    dockerImage = docker.build("$registry/$dockerRepository:$dockerImageTag", "--build-arg CACHEBUST=\$(date +%s) .") // ":$BUILD_NUMBER"
+                                    }
                                 }
                             }
                         }
@@ -173,7 +114,6 @@ pipeline {
                     }
                 }
             }
-    }
     /*
     stage('Deploy Image') {
       steps{
