@@ -24,7 +24,7 @@
                             deleteDir()
                             stage('Clone Code') {
                                 
-								sh "git clone --depth 1 -b ${branch} https://eranbibi:${gitPass}@bitbucket.org/scalock/server.git ."
+								sh "git clone --depth 1 -b 4.2.0 https://eranbibi:${gitPass}@bitbucket.org/scalock/server.git ."
                                 sh "git clone --depth 1 -b master https://eranbibi:${gitPass}@bitbucket.org/scalock/devops.git"
 
                                 writeFile file: env.WORKSPACE+"/branch", text: branch+"\n"
