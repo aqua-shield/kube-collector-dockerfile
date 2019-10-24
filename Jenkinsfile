@@ -1,5 +1,4 @@
 @Library('aqua-pipeline-lib@master')_
-pipeline {
   environment {
     registry = "registry.aquasec.com"
     registryCredential = 'registry-credentials'
@@ -123,4 +122,3 @@ pipeline {
       }
     }
   }
-}
