@@ -1,3 +1,4 @@
+@Library('aqua-pipeline-lib@master')_
 pipeline {
   environment {
     registry = "registry.aquasec.com"
@@ -25,7 +26,7 @@ pipeline {
         }
       }
     }
-node('build_machines'){
+    node('build_machines'){
             timeout(120) {
                 HOST_NAME = sh(script: "hostname", returnStdout: true).replaceAll("\\s","")
                 ansiColor('xterm') {
