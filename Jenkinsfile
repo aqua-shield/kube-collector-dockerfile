@@ -11,6 +11,14 @@
     AZURE_ACR_PASSWORD = credentials('aquasecAzureACRpassword')
     GIT_PASS = credentials('gitPass')
   }
+  withCredentials([string(credentialsId: 'gitPass', variable: 'gitPass'),
+                string(credentialsId: 'aquadevAzureACRpassword', variable: 'aquadevAzureACRpassword'),
+                string(credentialsId: 'aquaDevLicense', variable: 'aquaDevLicense'),
+				string(credentialsId: 'automationaquaDockerHubpassword', variable: 'automationaquaDockerHubpassword'),
+                [$class: 'UsernamePasswordMultiBinding', credentialsId: 'jiraApi', usernameVariable: 'JIRA_API_USER', passwordVariable: 'JIRA_API_TOKEN'],
+                [$class: 'UsernamePasswordMultiBinding', credentialsId: 'auth0Credential', usernameVariable: 'auth0_user', passwordVariable: 'auth0_pass']
+                ]) {
+                    timestamps{
     node('build_machines'){
             timeout(120) {
                 HOST_NAME = sh(script: "hostname", returnStdout: true).replaceAll("\\s","")
@@ -121,3 +129,5 @@
       }
     }
   }
+                    }
+                }
