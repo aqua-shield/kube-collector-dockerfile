@@ -1,16 +1,4 @@
 @Library('aqua-pipeline-lib@master')_
-  environment {
-    registry = "registry.aquasec.com"
-    registryCredential = 'registry-credentials'
-    dockerRepository = 'kube-collector'
-    dockerImageTag = 'web'
-    CREATE_NEW_GIT_BRANCH_FOR_TARGET = true
-    AWS_ACCESS_KEY_ID = credentials('jenkinsAwsAccessKeyId')
-    AWS_SECRET_ACCESS_KEY = credentials('jenkinsAwsSecretAccessKey')
-    AUTOMATION_DOCKERHUB_PASSWORD = credentials('automationaquaDockerHubpassword')
-    AZURE_ACR_PASSWORD = credentials('aquasecAzureACRpassword')
-    GIT_PASS = credentials('gitPass')
-  }
   withCredentials([string(credentialsId: 'gitPass', variable: 'gitPass'),
                 string(credentialsId: 'aquadevAzureACRpassword', variable: 'aquadevAzureACRpassword'),
                 string(credentialsId: 'aquaDevLicense', variable: 'aquaDevLicense'),
@@ -20,6 +8,18 @@
                 ]) {
                     timestamps{
     node('build_machines'){
+          environment {
+            registry = "registry.aquasec.com"
+            registryCredential = 'registry-credentials'
+            dockerRepository = 'kube-collector'
+            dockerImageTag = 'web'
+            CREATE_NEW_GIT_BRANCH_FOR_TARGET = true
+            AWS_ACCESS_KEY_ID = credentials('jenkinsAwsAccessKeyId')
+            AWS_SECRET_ACCESS_KEY = credentials('jenkinsAwsSecretAccessKey')
+            AUTOMATION_DOCKERHUB_PASSWORD = credentials('automationaquaDockerHubpassword')
+            AZURE_ACR_PASSWORD = credentials('aquasecAzureACRpassword')
+            GIT_PASS = credentials('gitPass')
+        }
             timeout(120) {
                 HOST_NAME = sh(script: "hostname", returnStdout: true).replaceAll("\\s","")
                 ansiColor('xterm') {
@@ -65,24 +65,18 @@
                             }
                         }
                     )
-                    treeList := Tree{tree1, tree2,  tree3}
-                    for 
                     stage('Test: Run Aqua Scan'){
-                        if (skip_aqua_scan == "false") {
-                            def buildResult = 'success'
-                            echo '\033[1;33m[Info]    \033[0m Running Aqua Scan'
-                            try{
-                                aqua locationType: 'local', localImage: 'aquadev/server:'+branch, hideBase: false, notCompliesCmd: '', onDisallowed: 'fail', showNegligible: false
-                                aqua locationType: 'local', localImage: 'aquadev/gateway:'+branch, hideBase: false, notCompliesCmd: '', onDisallowed: 'fail', showNegligible: false
-                                aqua locationType: 'local', localImage: 'aquadev/database:'+branch, hideBase: false, notCompliesCmd: '', onDisallowed: 'fail', showNegligible: false		
-                                aqua locationType: 'local', localImage: 'aquadev/scanner-cli:'+branch, hideBase: false, notCompliesCmd: '', onDisallowed: 'fail', showNegligible: false
-                                aqua locationType: 'local', localImage: 'aquadev/csp:'+branch, hideBase: false, notCompliesCmd: '', onDisallowed: 'pass', showNegligible: false
-                            }catch(e){
-                                    notifyBuild("Aqua CSP scan step")
-                                    error("Error with Aqua CSP Scan")                                    
-                            }
-                        } else {
-                            echo '\033[1;33m[Info]    \033[0m Skipping Aqua Scan'    
+                        def buildResult = 'success'
+                        echo '\033[1;33m[Info]    \033[0m Running Aqua Scan'
+                        try{
+                            aqua locationType: 'local', localImage: 'aquadev/server:'+branch, hideBase: false, notCompliesCmd: '', onDisallowed: 'fail', showNegligible: false
+                            aqua locationType: 'local', localImage: 'aquadev/gateway:'+branch, hideBase: false, notCompliesCmd: '', onDisallowed: 'fail', showNegligible: false
+                            aqua locationType: 'local', localImage: 'aquadev/database:'+branch, hideBase: false, notCompliesCmd: '', onDisallowed: 'fail', showNegligible: false		
+                            aqua locationType: 'local', localImage: 'aquadev/scanner-cli:'+branch, hideBase: false, notCompliesCmd: '', onDisallowed: 'fail', showNegligible: false
+                            aqua locationType: 'local', localImage: 'aquadev/csp:'+branch, hideBase: false, notCompliesCmd: '', onDisallowed: 'pass', showNegligible: false
+                        }catch(e){
+                                notifyBuild("Aqua CSP scan step")
+                                error("Error with Aqua CSP Scan")                                    
                         }
                     }
 
