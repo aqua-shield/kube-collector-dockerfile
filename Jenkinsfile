@@ -58,7 +58,6 @@
                                     git 'https://aqua-shield:Xhxnv1234!@github.com/aqua-shield/kube-collector-dockerfile.git'
                             }
                             stage('Building Image') {
-                                  environment {
                                     registry = "registry.aquasec.com"
                                     dockerRepository = 'kube-collector'
                                     dockerImageTag = 'web'
