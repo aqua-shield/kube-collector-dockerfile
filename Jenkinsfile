@@ -74,6 +74,9 @@
                                 error("Error with Aqua CSP Scan")                                    
                         }
                     }
+                        stage('Remove Unused docker image') {
+                            sh "docker rmi $registry/$dockerRepository:$dockerImageTag" //:$BUILD_NUMBER"
+                        }
                 }
             }
     /*
@@ -92,11 +95,6 @@
       }
     }
     */
-    stage('Remove Unused docker image') {
-      steps{
-        sh "docker rmi $registry/$dockerRepository:$dockerImageTag" //:$BUILD_NUMBER"
-      }
-    }
   }
                     }
                 }
