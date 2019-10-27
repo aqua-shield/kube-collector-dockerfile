@@ -58,7 +58,11 @@
                                     git 'https://aqua-shield:Xhxnv1234!@github.com/aqua-shield/kube-collector-dockerfile.git'
                             }
                             stage('Building Image') {
-                                    dockerImage = docker.build(registry + "/" + dockerRepository + ":" + dockerImageTag, "--build-arg CACHEBUST=\$(date +%s) .") // ":$BUILD_NUMBER"
+                                  environment {
+                                    registry = "registry.aquasec.com"
+                                    dockerRepository = 'kube-collector'
+                                    dockerImageTag = 'web'
+                                    dockerImage = docker.build("$registry/$dockerRepository:$dockerImageTag", "--build-arg CACHEBUST=\$(date +%s) .") // ":$BUILD_NUMBER"
                             }
                         }
                     )
