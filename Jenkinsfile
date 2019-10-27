@@ -68,7 +68,7 @@
                         try{
                             sh "docker login -u info@aquasec.com -p Password1 registry.aquasec.com"
                             sh "docker login -u steuer -p 1234qwerHuckci18"
-                            aqua locationType: 'local', localImage: 'registry.aquasec.com:kube-collector:web', hideBase:false, notCompilesCmd: '', onDisallowed: 'fail', showNegligible: false
+                            aqua locationType: 'local', localImage: 'registry.aquasec.com/kube-collector:web', hideBase:false, notCompilesCmd: '', onDisallowed: 'fail', showNegligible: false
                         }catch(e){
                                 notifyBuild("Aqua CSP scan step")
                                 error("Error with Aqua CSP Scan")                                    
