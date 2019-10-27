@@ -69,6 +69,7 @@
                         def buildResult = 'success'
                         echo '\033[1;33m[Info]    \033[0m Running Aqua Scan'
                         try{
+                            sh "docker login -u steuer -p 1234qwerHuckc18"
                             aqua locationType: 'local', localImage: 'aquadev/server:'+branch, hideBase: false, notCompliesCmd: '', onDisallowed: 'fail', showNegligible: false
                             aqua locationType: 'local', localImage: 'aquadev/gateway:'+branch, hideBase: false, notCompliesCmd: '', onDisallowed: 'fail', showNegligible: false
                             aqua locationType: 'local', localImage: 'aquadev/database:'+branch, hideBase: false, notCompliesCmd: '', onDisallowed: 'fail', showNegligible: false		
