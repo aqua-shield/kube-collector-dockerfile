@@ -79,21 +79,6 @@
                                 error("Error with Aqua CSP Scan")                                    
                         }
                     }
-
-                    if (skip_integration_tests == "false" || skip_ui_verification == "false") {
-                        echo '\033[1;33m[Info]    \033[0m Running Aqua Console for Testing'
-                        try{
-                            sh "docker rm -fv aqua-csp-ci"
-                        }catch(e){
-                        }
-                        try{
-                            sh "docker run -d -p 5433:5432 -p 8088:8080 --name aqua-csp-ci -e AQUA_GRPC_PORT=8449 -e ADMIN_PASSWORD=password -e SCALOCK_LOG_LEVEL=DEBUG -e LICENSE_TOKEN=${aquaDevLicense} -v /var/run/docker.sock:/var/run/docker.sock aquadev/csp:${branch}"
-                            sleep 20
-                        }catch(e){
-                            notifyBuild("running csp inatance for testing")
-                            error("Unable to start Aqua CSP")
-                        }                       
-                    }
                 }
             }
     /*
