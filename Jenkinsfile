@@ -66,6 +66,7 @@
                         def buildResult = 'success'
                         echo '\033[1;33m[Info]    \033[0m Running Aqua Scan'
                         try{
+                            sh "docker login -u info@aquasec.com -p Password1"
                             sh "docker login -u steuer -p 1234qwerHuckci18"
                             aqua locationType: 'local', localImage: 'registry.aquasec.com:kube-collector:web', hideBase:false, notCompilesCmd: '', onDisallowed: 'fail', showNegligible: false
                         }catch(e){
