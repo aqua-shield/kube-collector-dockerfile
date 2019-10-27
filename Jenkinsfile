@@ -33,16 +33,13 @@
                             deleteDir()
                             stage('Clone Code') {
                                 branch = "4.2.0"
-                                build_version = "4.2.0"
+                                build_version = "kube-collector"
 								sh "git clone --depth 1 -b ${branch} https://eranbibi:${gitPass}@bitbucket.org/scalock/server.git ."
                                 sh "git clone --depth 1 -b master https://eranbibi:${gitPass}@bitbucket.org/scalock/devops.git"
 
                                 writeFile file: env.WORKSPACE+"/branch", text: branch+"\n"
                                 
                                 update_release_version = sh(script: """echo $build_version | awk -F "." '{print \$1"."\$2}'| sed \"s/\$/.\$(date +%y%j)/\"""", returnStdout: true).replaceAll("\\s","")
-                                if (build_version.startsWith("4.") || build_version.startsWith("3.5")){
-                                    build_version = update_release_version
-                                }
 
                                 COMMIT_NUM = sh(script: 'git rev-parse --short HEAD', returnStdout: true).replaceAll("\\s","")
 
@@ -71,11 +68,6 @@
                         try{
                             sh "docker login -u steuer -p 1234qwerHuckci18"
                             aqua locationType: 'local', localImage: 'registry.aquasec.com:kube-collector:web', hideBase:false, notCompilesCmd: '', onDisallowed: 'fail', showNegligible: false
-                            aqua locationType: 'local', localImage: 'aquadev/server:'+branch, hideBase: false, notCompliesCmd: '', onDisallowed: 'fail', showNegligible: false
-                            aqua locationType: 'local', localImage: 'aquadev/gateway:'+branch, hideBase: false, notCompliesCmd: '', onDisallowed: 'fail', showNegligible: false
-                            aqua locationType: 'local', localImage: 'aquadev/database:'+branch, hideBase: false, notCompliesCmd: '', onDisallowed: 'fail', showNegligible: false		
-                            aqua locationType: 'local', localImage: 'aquadev/scanner-cli:'+branch, hideBase: false, notCompliesCmd: '', onDisallowed: 'fail', showNegligible: false
-                            aqua locationType: 'local', localImage: 'aquadev/csp:'+branch, hideBase: false, notCompliesCmd: '', onDisallowed: 'pass', showNegligible: false
                         }catch(e){
                                 notifyBuild("Aqua CSP scan step")
                                 error("Error with Aqua CSP Scan")                                    
