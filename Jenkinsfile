@@ -65,6 +65,8 @@
                             }
                         }
                     )
+                    treeList := Tree{tree1, tree2,  tree3}
+                    for 
                     stage('Test: Run Aqua Scan'){
                         if (skip_aqua_scan == "false") {
                             def buildResult = 'success'
